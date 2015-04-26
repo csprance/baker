@@ -28,15 +28,18 @@ class Baker(object):
 	def writeXML(self):
 		print "XML File Written Succesfully"
 		print self.settings.tag
+		return 'file location'
+	
+	def startBake(self):
+		x = self.writeXML()
+		print ("Starting xNormal bake using %s" % x) 
 
 
 
 def main():
+	# create our baker instance
 	x = Baker()	
-	print x.hi_poly_settings['File']
-	print x.lo_poly_settings
-	print x.generate_maps_settings
-	x.writeXML()
+	x.startBake()
 
 if __name__ == '__main__':
 	main()
