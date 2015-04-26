@@ -1,5 +1,4 @@
 #python
-
 '''
 This script allows you to use xNormal within Modo
 It uses xml bake settings files and runs them through xnormal.exe
@@ -9,6 +8,9 @@ All of these settings can be set from within Modo
 __author__ = 'Chris Sprance'
 # import lx
 import xml.etree.ElementTree as ET
+import subprocess
+import tempfile
+
 
 class Baker(object):
 	"""This Class Contains all the methods necessary to modify xml files based on settings and tweak and save the xml file"""
@@ -26,13 +28,19 @@ class Baker(object):
 		return tree
 
 	def writeXML(self):
-		print "XML File Written Succesfully"
-		print self.settings.tag
-		return 'file location'
+		print ("XML File Written Successfully")
+		tf = tempfile.NamedTemporaryFile(suffix='.xml')
+		print (self.settings.tag)
+		return tf.name
 	
 	def startBake(self):
 		x = self.writeXML()
-		print ("Starting xNormal bake using %s" % x) 
+		#subprocess.Popen('c:/program files (x86)/santiago orgaz/xnormal 3.17.9/x64/xnormal.exe')
+		print ("Starting xNormal bake using %s" % x)
+
+	'''Sends the settings dictionary to be written to the xml file'''
+	def changeSettings(self, mesh_type, settings):
+		pass
 
 
 
