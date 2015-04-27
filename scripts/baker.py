@@ -10,20 +10,22 @@ import lx
 import xml.etree.ElementTree as ET
 import subprocess
 import tempfile
+import os, sys
 
-
+settings = dict()
 class Baker(object):
 	"""This Class Contains all the methods necessary to modify xml files based on settings and tweak and save the xml file"""
 	def __init__(self):
 		super(Baker, self).__init__()
 		self.settings = self.parseXML()
+		self.settings_file = str()
 		self.xpath = str()
 		self.hi_poly_settings = self.settings.find('HighPolyModel').find('Mesh').attrib
 		self.lo_poly_settings = self.settings.find('LowPolyModel').find('Mesh').attrib
 		self.generate_maps_settings = self.settings.find('GenerateMaps').attrib
 		self.settings_path = str()
 
-
+	
 	def parseXML(self):
 		xmlfile = r'''<?xml version="1.0" encoding="UTF-8"?>
 <Settings Version="3.18.10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -74,30 +76,51 @@ class Baker(object):
 	</Viewer3D>
 </Settings>'''
 		tree = ET.fromstring(xmlfile)
+		#config = open(self.settings_file, 'w+')
 		return tree
-
+	
 	def writeXML(self):
+		'''This method writes settings from a dictionary of settings'''
 		print ("XML File Written Successfully")
 		tf = tempfile.NamedTemporaryFile(suffix='.xml')
 		print (self.settings.tag)
 		return tf.name
+
+	def configExists(self):
+		print(os.path.dirname(os.path.realpath(__file__)))
+		if True:
+			return True
+	
 	
 	def startBake(self):
-		'''Blah Blah Blah'''
+		'''This kicks off the xNormal worker thread'''
 		x = self.writeXML()
-		#subprocess.Popen(self.xpath + ' ' + self.settings_path )
-		print ("Starting xNormal bake using %s" % x)
+		# Try To Kick off the xNormal worker fail silently
+		try:
+			retcode = subprocess.Popen(str(self.xpath+ ' ' + self.settings_file ))
+			pass
+		except:
+			pass
+		print ("Starting xNormal bake at %s using %s" % (self.xpath, x))
+
 
 	def changeSettings(self, mesh_type, settings):
 		'''Sends the settings dictionary to be written to the xml file'''
 		pass
 
+'''
+Start the main thread off
+
+'''
 
 
 def main():
 	# create our baker instance
 	x = Baker()	
-	x.xpath = 'test'
+	# set the path for xnormal
+	x.xpath = 'c:/program files (x86)/santiago orgaz/x64/xnormal.exe'
+	# where do we want to store our file for the settings or if it already exists it will use that file
+	x.settings_file = 'c:/baker'
 	x.startBake()
 	x.changeSettings
 	print x.xpath
