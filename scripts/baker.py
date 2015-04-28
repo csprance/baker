@@ -37,10 +37,8 @@ class Baker(object):
         # low poly settings
         self.lo_poly_settings = self.settings.find(
             'LowPolyModel').find('Mesh').attrib
-
         # generate map settings
-        self.generate_maps_settings = self.settings.find(
-            'GenerateMaps').attrib
+        self.generate_maps_settings = self.settings.find('GenerateMaps').attrib
 
         # path to xNormal
         self.xpath = lx.eval('user.value baker_xpath ?')
@@ -49,17 +47,17 @@ class Baker(object):
         self.user_values = self.get_user_values()
 
         # this is the base directory of the kit
-        self.BASE_PATH 	= (lx.eval('query platformservice path.path ? scripts') + "\\baker").replace("\\", "/")
+        self.BASE_PATH = (lx.eval(
+            'query platformservice path.path ? scripts') + "\\baker").replace("\\", "/")
 
     def get_user_values(self):
         user_values = dict()
+
         uv = ['low_poly_mesh', 'hi_poly_mesh', 'cage_mesh', 'settings_file', 'baker_ao_map', 'baker_norm_map', 'baker_cavity_map',
-              'baker_norm_map', 'baker_tangent_space', 'baker_edge_padding', 'baker_map_size_x', 'baker_map_size_y']
+              'baker_norm_map', 'baker_tangent_space', 'baker_edge_padding', 'baker_map_size_x', 'baker_map_size_y', 'baker_map_output']
+
         for x in uv:
-            if x == 'baker_map_size_y' or x == 'baker_map_size_x':
-                user_values[x] = lx.eval('user.value %s ?' % x)
-            else:
-                user_values[x] = lx.eval('user.value %s ?' % x)
+            user_values[x] = lx.eval('user.value %s ?' % x)
         return user_values
 
     def parseXML(self):
@@ -68,25 +66,70 @@ class Baker(object):
         return tree
 
     def writeXML(self):
-        '''This method writes settings from a dictionary of settings'''
+        '''This method writes settings from the settings dictionary'''
+        # open the settings file
+        f = open(self.settings_file + '_bake', 'w+')
+        # write the file using utf-8 encoding
+        f.write(ET.tostring(self.settings, encoding='UTF-8'))
+        f.close()
+        return f
 
-        lx.out("XML File Written Successfully")
-        tf = tempfile.NamedTemporaryFile(suffix='.xml', delete=False)
-        tf.write(xmlstring)
-        return tf.name
+    def set_user_values(self):
+        self.lo_poly_settings['File'] = self.user_values['low_poly_mesh']
+        self.lo_poly_settings['CageFile'] = self.user_values['cage_mesh']
+        self.hi_poly_settings['File'] = self.user_values['hi_poly_mesh']
+        self.generate_maps_settings['EdgePadding'] = str(
+            self.user_values['baker_edge_padding'])
+        self.generate_maps_settings[
+            'File'] = self.user_values['baker_map_output']
+        self.generate_maps_settings['GenNormals'] = 'true' if self.user_values[
+            'baker_norm_map'] == 1 else 'false'
+        self.generate_maps_settings['GenAO'] = 'true' if self.user_values[
+            'baker_ao_map'] == 1 else 'false'
+        self.generate_maps_settings['GenCavity'] = 'true' if self.user_values[
+            'baker_cavity_map'] == 1 else 'false'
+        self.generate_maps_settings['TangentSpace'] = 'true' if self.user_values[
+            'baker_tangent_space'] == 1 else 'false'
+
+        if self.user_values['baker_map_size_x'] == '0':
+            self.generate_maps_settings['Width'] = str(256)
+        elif self.user_values['baker_map_size_x'] == '1':
+            self.generate_maps_settings['Width'] = str(512)
+        elif self.user_values['baker_map_size_x'] == '2':
+            self.generate_maps_settings['Width'] = str(1024)
+        elif self.user_values['baker_map_size_x'] == '3':
+            self.generate_maps_settings['Width'] = str(2048)
+        elif self.user_values['baker_map_size_x'] == '4':
+            self.generate_maps_settings['Width'] = str(4096)
+        elif self.user_values['baker_map_size_x'] == '5':
+            self.generate_maps_settings['Width'] = str(8192)
+
+        if self.user_values['baker_map_size_y'] == '0':
+            self.generate_maps_settings['Height'] = str(256)
+        elif self.user_values['baker_map_size_y'] == '1':
+            self.generate_maps_settings['Height'] = str(512)
+        elif self.user_values['baker_map_size_y'] == '2':
+            self.generate_maps_settings['Height'] = str(1024)
+        elif self.user_values['baker_map_size_y'] == '3':
+            self.generate_maps_settings['Height'] = str(2048)
+        elif self.user_values['baker_map_size_y'] == '4':
+            self.generate_maps_settings['Height'] = str(4096)
+        elif self.user_values['baker_map_size_y'] == '5':
+            self.generate_maps_settings['Height'] = str(8192)
+
+        #self.generate_maps_settings['Height'] = self.user_values['baker_map_size_y']
 
     def startBake(self):
         '''This kicks off the xNormal worker thread'''
-        x = self.writeXML()
+        self.set_user_values()
+        config_file = self.writeXML()
         # Try To Kick off the xNormal worker fail silently
         try:
-            #retcode = subprocess.Popen(str(self.xpath+ ' ' + self.settings_file ))
-            retcode = 'Opening xNormal (SimulaTED)'
-            lx.out(retcode)
+            subprocess.Popen(
+                str(self.xpath + ' ' + self.settings_file + '_bake'))
+            return config_file
         except:
             lx.out("Bake Failed Please Check Settings and try again")
-            pass
-        lx.out("Starting xNormal bake at %s using %s" % (self.xpath, x))
 
 '''
 Start the main thread off
@@ -97,7 +140,8 @@ Start the main thread off
 def main():
     # create our baker instance
     x = Baker()
-    lx.out(x.user_values)
+    config = x.startBake()
+    lx.out(config.name)
 
 
 if __name__ == '__main__':
