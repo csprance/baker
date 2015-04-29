@@ -53,8 +53,54 @@ class Baker(object):
     def get_user_values(self):
         user_values = dict()
 
-        uv = ['low_poly_mesh', 'hi_poly_mesh', 'cage_mesh', 'settings_file', 'baker_ao_map', 'baker_norm_map', 'baker_cavity_map',
-              'baker_norm_map', 'baker_tangent_space', 'baker_edge_padding', 'baker_map_size_x', 'baker_map_size_y', 'baker_map_output']
+        uv = ['low_poly_mesh', #low poly mesh
+        'baker_xpath',
+        'hi_poly_mesh', # hi poly mesh
+        'cage_mesh', #cage mesh
+        'settings_file', # where the settings file is stored at
+        'baker_overwrite_warn',
+        'baker_bucket_size',
+        'baker_aa',
+				'baker_map_size_x', # what size to output the width
+				'baker_map_size_y', # what size to output the height
+				'baker_map_output', # where to output the maps to
+				'baker_edge_padding',              
+        'baker_height_map' , #bool bake height map
+        'baker_height_normalization' , # method used to normalize height map
+        'baker_base_texture_map', # bool bake base texture
+        'baker_ao_map', #bool bake AO
+				'baker_ao_rays', #int num rays
+				'baker_ao_distribution', # list choice
+				'baker_ao_bias', # int
+				'baker_ao_spread_angle', # int
+				'baker_ao_limit_ray_distance', # bool 
+				'baker_ao_attenuation_x', #int 
+				'baker_ao_attenuation_y', # int
+				'baker_ao_attenuation_z', # int
+				'baker_ao_jitter', 
+				'baker_ao_ignore_backface_hits', 
+				'baker_ao_allow_full_occlusion', 
+        'baker_cavity_map', 
+        'baker_cavity_rays',
+        'baker_cavity_radius',
+        'baker_cavity_contrast',
+        'baker_cavity_steps',
+				'baker_norm_map', 
+				'baker_tangent_space', 
+				'baker_norm_swiz_x', 
+				'baker_norm_swiz_y',
+				'baker_norm_swiz_z',
+				'baker_curvature_map', # bool bake curvature map
+				'baker_curvature_rays', # 
+				'baker_curvature_jitter', # 
+				'baker_curvature_bias', # 
+				'baker_curvature_spread_angle', # 
+				'baker_curvature_algorithm', # 
+				'baker_curvature_distribution', # 
+				'baker_curvature_search_distance', # 
+				'baker_curvature_tone_mapping', # 
+				'baker_curvature_smoothing', # 
+				]
 
         for x in uv:
             user_values[x] = lx.eval('user.value %s ?' % x)
@@ -141,7 +187,7 @@ def main():
     # create our baker instance
     x = Baker()
     config = x.startBake()
-    lx.out(config.name)
+    lx.out(x.BASE_PATH)
 
 
 if __name__ == '__main__':
