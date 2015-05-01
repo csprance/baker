@@ -1,29 +1,19 @@
-# README #
+# xBaker #
+## From and Scripts to Bake your maps in xNormal from modo ##
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Installation is not configured yet as this is still a WIP kit.
 
-### What is this repository for? ###
+### xBaker is a set of Scripts and forms that will allow you change and bake maps using xnormal from modo. ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+xNormal will accept a fiel full of bake settings and bake maps based on the settings in the file. The scripts create this xml file and the form allows you to store and change these values. Each time you hit bake with xNormal (or bind it to a hotkey) it will regenerate the xml file based on the settings in the form. I got this idea from backstube by Airborne Studios.
 
-### How do I get set up? ###
+* Works in mod 801 for sure 
+* Version 0.01
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
 
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
+### Please let me know if you have any interest in helping with this project I'd love to see any code ideas or suggestions ###
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* Chris Sprance chrissprance@gmail.com
+* http://www.csprance.com
