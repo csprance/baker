@@ -7,6 +7,8 @@ Installation is not configured yet as this is still a WIP kit.
 
 xNormal will accept a fiel full of bake settings and bake maps based on the settings in the file. The scripts create this xml file and the form allows you to store and change these values. Each time you hit bake with xNormal (or bind it to a hotkey) it will regenerate the xml file based on the settings in the form. I got this idea from backstube by Airborne Studios.
 
+I want to expose all of the options within xnormal to the form. Why not. Strangely enough (and this may just be me I haven't tested) but I feel like I'm getting faster dialation times (Which was usually the longest part of the bake) So hooray!
+
 * Works in mod 801 for sure 
 * Version 0.01
 
