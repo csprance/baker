@@ -53,7 +53,8 @@ class Baker(object):
     def get_user_values(self):
         user_values = dict()
 
-        uv = ['low_poly_mesh', #low poly mesh
+        uv = [
+        'low_poly_mesh', #low poly mesh
         'baker_xpath',
         'hi_poly_mesh', # hi poly mesh
         'cage_mesh', #cage mesh
@@ -136,32 +137,38 @@ class Baker(object):
             'baker_cavity_map'] == 1 else 'false'
         self.generate_maps_settings['TangentSpace'] = 'true' if self.user_values[
             'baker_tangent_space'] == 1 else 'false'
+		
 
-        if self.user_values['baker_map_size_x'] == '0':
-            self.generate_maps_settings['Width'] = str(256)
-        elif self.user_values['baker_map_size_x'] == '1':
-            self.generate_maps_settings['Width'] = str(512)
-        elif self.user_values['baker_map_size_x'] == '2':
-            self.generate_maps_settings['Width'] = str(1024)
-        elif self.user_values['baker_map_size_x'] == '3':
-            self.generate_maps_settings['Width'] = str(2048)
-        elif self.user_values['baker_map_size_x'] == '4':
-            self.generate_maps_settings['Width'] = str(4096)
-        elif self.user_values['baker_map_size_x'] == '5':
-            self.generate_maps_settings['Width'] = str(8192)
+		baker_sizes = {'0':'256','1':'512','2':'1024','3':'2048','4':'4096','5':'8192',}
 
-        if self.user_values['baker_map_size_y'] == '0':
-            self.generate_maps_settings['Height'] = str(256)
-        elif self.user_values['baker_map_size_y'] == '1':
-            self.generate_maps_settings['Height'] = str(512)
-        elif self.user_values['baker_map_size_y'] == '2':
-            self.generate_maps_settings['Height'] = str(1024)
-        elif self.user_values['baker_map_size_y'] == '3':
-            self.generate_maps_settings['Height'] = str(2048)
-        elif self.user_values['baker_map_size_y'] == '4':
-            self.generate_maps_settings['Height'] = str(4096)
-        elif self.user_values['baker_map_size_y'] == '5':
-            self.generate_maps_settings['Height'] = str(8192)
+        self.generate_maps_settings['Width'] = bake_sizes[self.user_values['baker_map_size_x']]
+        self.generate_maps_settings['Height'] = bake_sizes[self.user_values['baker_map_size_y']]
+        
+        # if self.user_values['baker_map_size_x'] == '0':
+        #     self.generate_maps_settings['Width'] = str(256)
+        # elif self.user_values['baker_map_size_x'] == '1':
+        #     self.generate_maps_settings['Width'] = str(512)
+        # elif self.user_values['baker_map_size_x'] == '2':
+        #     self.generate_maps_settings['Width'] = str(1024)
+        # elif self.user_values['baker_map_size_x'] == '3':
+        #     self.generate_maps_settings['Width'] = str(2048)
+        # elif self.user_values['baker_map_size_x'] == '4':
+        #     self.generate_maps_settings['Width'] = str(4096)
+        # elif self.user_values['baker_map_size_x'] == '5':
+        #     self.generate_maps_settings['Width'] = str(8192)
+
+        # if self.user_values['baker_map_size_y'] == '0':
+        #     self.generate_maps_settings['Height'] = str(256)
+        # elif self.user_values['baker_map_size_y'] == '1':
+        #     self.generate_maps_settings['Height'] = str(512)
+        # elif self.user_values['baker_map_size_y'] == '2':
+        #     self.generate_maps_settings['Height'] = str(1024)
+        # elif self.user_values['baker_map_size_y'] == '3':
+        #     self.generate_maps_settings['Height'] = str(2048)
+        # elif self.user_values['baker_map_size_y'] == '4':
+        #     self.generate_maps_settings['Height'] = str(4096)
+        # elif self.user_values['baker_map_size_y'] == '5':
+        #     self.generate_maps_settings['Height'] = str(8192)
 
         #self.generate_maps_settings['Height'] = self.user_values['baker_map_size_y']
 
