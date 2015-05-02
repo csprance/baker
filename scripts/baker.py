@@ -56,61 +56,81 @@ class Baker(object):
         user_values = dict()
         # This list contains all our user values.
         uv = [
-        'low_poly_mesh', #low poly mesh
-        'baker_xpath', # path where xnormal resides at
-        'hi_poly_mesh', # hi poly mesh
-        'cage_mesh', #cage mesh
-        'settings_file', # where the settings file is stored at
-        'baker_overwrite_warn', # should we overwrite the file or warn about it
-        'baker_bucket_size', # render bucket size
-        'baker_aa', # how much aa to us 1x 2x 4x
-				'baker_map_size_x', # what size to output the width
-				'baker_map_size_y', # what size to output the height
-				'baker_map_output', # where to output the maps to
-				'baker_edge_padding', # how much edge padding to use 
-        'baker_height_map' , #bool bake height map
-        'baker_height_normalization' , # method used to normalize height map
-        'baker_base_texture_map', # bool bake base texture
-        'baker_ao_map', #bool bake AO
-				'baker_ao_rays', #int num rays
-				'baker_ao_distribution', # list choice
-				'baker_ao_bias', # int
-				'baker_ao_spread_angle', # int
-				'baker_ao_limit_ray_distance', # bool 
-				'baker_ao_attenuation_x', #int 
-				'baker_ao_attenuation_y', # int
-				'baker_ao_attenuation_z', # int
-				'baker_ao_jitter', # bool
-				'baker_ao_ignore_backface_hits', # bool
-				'baker_ao_allow_full_occlusion', # bool
-        'baker_cavity_map', # bool should we bake a cavity map
-        'baker_cavity_rays', # how many rays to use
-        'baker_cavity_radius', # int
-        'baker_cavity_contrast', # int
-        'baker_cavity_steps', #int
-				'baker_norm_map', # bool should we bake a normal map?
-				'baker_tangent_space', # bool should the normal map be a tangent space world map
-				'baker_norm_swiz_x', # the swizzle of the normal this is a string xyz +-
-				'baker_norm_swiz_y', # the swizzle of the normal this is a string xyz +-
-				'baker_norm_swiz_z', # the swizzle of the normal this is a string xyz +-
-				'baker_curvature_map', # bool bake curvature map
-				'baker_curvature_rays', # how many rays to use
-				'baker_curvature_jitter', # Bool use jitter or curavutre?
-				'baker_curvature_bias', # int
-				'baker_curvature_spread_angle', # int
-				'baker_curvature_algorithm', # string uniform cosine cosinesq
-				'baker_curvature_distribution', # # string uniform cosine cosinesq
-				'baker_curvature_search_distance', # # int
-				'baker_curvature_tone_mapping', # monocrom twotone threecolor string
-				'baker_curvature_smoothing', # should we use smoothing boolean
-				]
+            'low_poly_mesh',  # low poly mesh
+            'baker_xpath',  # path where xnormal resides at
+            'hi_poly_mesh',  # hi poly mesh
+            'cage_mesh',  # cage mesh
+            'settings_file',  # where the settings file is stored at
+            # should we overwrite the file or warn about it
+            'baker_overwrite_warn',
+            'baker_bucket_size',  # render bucket size
+            'baker_aa',  # how much aa to us 1x 2x 4x
+            'baker_map_size_x',  # what size to output the width
+            # what size to output the height
+            'baker_map_size_y',
+            # where to output the maps to
+            'baker_map_output',
+            # how much edge padding to use
+            'baker_edge_padding',
+            'baker_height_map',  # bool bake height map
+            # method used to normalize height map
+            'baker_height_normalization',
+            'baker_base_texture_map',  # bool bake base texture
+            'baker_ao_map',  # bool bake AO
+            'baker_ao_rays',  # int num rays
+            'baker_ao_distribution',  # list choice
+            'baker_ao_bias',  # int
+            'baker_ao_spread_angle',  # int
+            'baker_ao_limit_ray_distance',  # bool
+            'baker_ao_attenuation_x',  # int
+            'baker_ao_attenuation_y',  # int
+            'baker_ao_attenuation_z',  # int
+            'baker_ao_jitter',  # bool
+                                'baker_ao_ignore_backface_hits',  # bool
+                                'baker_ao_allow_full_occlusion',  # bool
+            'baker_cavity_map',  # bool should we bake a cavity map
+            'baker_cavity_rays',  # how many rays to use
+            'baker_cavity_radius',  # int
+            'baker_cavity_contrast',  # int
+            'baker_cavity_steps',  # int
+                                # bool should we bake a normal map?
+                                'baker_norm_map',
+                                # bool should the normal map be a tangent space
+                                # world map
+                                'baker_tangent_space',
+                                # the swizzle of the normal this is a string
+                                # xyz +-
+                                'baker_norm_swiz_x',
+                                # the swizzle of the normal this is a string
+                                # xyz +-
+                                'baker_norm_swiz_y',
+                                # the swizzle of the normal this is a string
+                                # xyz +-
+                                'baker_norm_swiz_z',
+                                # bool bake curvature map
+                                'baker_curvature_map',
+                                'baker_curvature_rays',  # how many rays to use
+                                # Bool use jitter or curavutre?
+                                'baker_curvature_jitter',
+                                'baker_curvature_bias',  # int
+                                'baker_curvature_spread_angle',  # int
+                                # string uniform cosine cosinesq
+                                'baker_curvature_algorithm',
+                                # string uniform cosine cosinesq
+                                'baker_curvature_distribution',
+                                'baker_curvature_search_distance',  # int
+                                # monocrom twotone threecolor string
+                                'baker_curvature_tone_mapping',
+                                # should we use smoothing boolean
+                                'baker_curvature_smoothing',
+        ]
 
         for x in uv:
             user_values[x] = lx.eval('user.value %s ?' % x)
         return user_values
 
     def parseXML(self):
-    	"""Parse the xml and return the xml tree back to us"""
+        """Parse the xml and return the xml tree back to us"""
         bake_settings = open(self.settings_file)
         tree = ET.parse(bake_settings).getroot()
         return tree
@@ -128,43 +148,47 @@ class Baker(object):
     def set_user_values(self):
         # low poly mesh file
         self.lo_poly_settings['File'] = self.user_values['low_poly_mesh']
-        
+
         # cage mesh file
         self.lo_poly_settings['CageFile'] = self.user_values['cage_mesh']
-        
+
         # where is the hi poly file at
         self.hi_poly_settings['File'] = self.user_values['hi_poly_mesh']
-        
+
         # How much edge padding to use
         self.generate_maps_settings['EdgePadding'] = str(
             self.user_values['baker_edge_padding'])
-        
+
         # Where to output the file
         self.generate_maps_settings[
             'File'] = self.user_values['baker_map_output']
-        
+
         # Generate Normal map boolean
         self.generate_maps_settings['GenNormals'] = 'true' if self.user_values[
             'baker_norm_map'] == 1 else 'false'
-        
+
         # Generate AO map boolean
         self.generate_maps_settings['GenAO'] = 'true' if self.user_values[
             'baker_ao_map'] == 1 else 'false'
-        
+
         # Cavity Map Generation Boolean
         self.generate_maps_settings['GenCavity'] = 'true' if self.user_values[
             'baker_cavity_map'] == 1 else 'false'
-        
+
         # Should the normal map be tangent space or world space?
         self.generate_maps_settings['TangentSpace'] = 'true' if self.user_values[
             'baker_tangent_space'] == 1 else 'false'
-		
-        # contains all the sizes of the map to bake 
-		baker_sizes = {'0':'256','1':'512','2':'1024','3':'2048','4':'4096','5':'8192',}
-		# set the height and width by looking up a dictionary value based on a key from a user value
-        self.generate_maps_settings['Width'] = bake_sizes[self.user_values['baker_map_size_x']]
-        self.generate_maps_settings['Height'] = bake_sizes[self.user_values['baker_map_size_y']]
-        
+
+        # contains all the sizes of the map to bake
+        baker_sizes = {'0': '256', '1': '512', '2': '1024',
+                       '3': '2048', '4': '4096', '5': '8192'}
+            # set the height and width by looking up a dictionary value based
+            # on a key from a user value
+        self.generate_maps_settings['Width'] = baker_sizes[
+            self.user_values['baker_map_size_x']]
+        self.generate_maps_settings['Height'] = baker_sizes[
+            self.user_values['baker_map_size_y']]
+
         # if self.user_values['baker_map_size_x'] == '0':
         #     self.generate_maps_settings['Width'] = str(256)
         # elif self.user_values['baker_map_size_x'] == '1':
