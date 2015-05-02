@@ -6,6 +6,8 @@ All of these settings can be set from within Modo
 
 '''
 __author__ = 'Chris Sprance'
+__version__ = 0.01
+
 import xml.etree.ElementTree as ET
 import subprocess
 import tempfile
@@ -52,20 +54,20 @@ class Baker(object):
 
     def get_user_values(self):
         user_values = dict()
-
+        # This list contains all our user values.
         uv = [
         'low_poly_mesh', #low poly mesh
-        'baker_xpath',
+        'baker_xpath', # path where xnormal resides at
         'hi_poly_mesh', # hi poly mesh
         'cage_mesh', #cage mesh
         'settings_file', # where the settings file is stored at
-        'baker_overwrite_warn',
-        'baker_bucket_size',
-        'baker_aa',
+        'baker_overwrite_warn', # should we overwrite the file or warn about it
+        'baker_bucket_size', # render bucket size
+        'baker_aa', # how much aa to us 1x 2x 4x
 				'baker_map_size_x', # what size to output the width
 				'baker_map_size_y', # what size to output the height
 				'baker_map_output', # where to output the maps to
-				'baker_edge_padding',              
+				'baker_edge_padding', # how much edge padding to use 
         'baker_height_map' , #bool bake height map
         'baker_height_normalization' , # method used to normalize height map
         'baker_base_texture_map', # bool bake base texture
@@ -78,29 +80,29 @@ class Baker(object):
 				'baker_ao_attenuation_x', #int 
 				'baker_ao_attenuation_y', # int
 				'baker_ao_attenuation_z', # int
-				'baker_ao_jitter', 
-				'baker_ao_ignore_backface_hits', 
-				'baker_ao_allow_full_occlusion', 
-        'baker_cavity_map', 
-        'baker_cavity_rays',
-        'baker_cavity_radius',
-        'baker_cavity_contrast',
-        'baker_cavity_steps',
-				'baker_norm_map', 
-				'baker_tangent_space', 
-				'baker_norm_swiz_x', 
-				'baker_norm_swiz_y',
-				'baker_norm_swiz_z',
+				'baker_ao_jitter', # bool
+				'baker_ao_ignore_backface_hits', # bool
+				'baker_ao_allow_full_occlusion', # bool
+        'baker_cavity_map', # bool should we bake a cavity map
+        'baker_cavity_rays', # how many rays to use
+        'baker_cavity_radius', # int
+        'baker_cavity_contrast', # int
+        'baker_cavity_steps', #int
+				'baker_norm_map', # bool should we bake a normal map?
+				'baker_tangent_space', # bool should the normal map be a tangent space world map
+				'baker_norm_swiz_x', # the swizzle of the normal this is a string xyz +-
+				'baker_norm_swiz_y', # the swizzle of the normal this is a string xyz +-
+				'baker_norm_swiz_z', # the swizzle of the normal this is a string xyz +-
 				'baker_curvature_map', # bool bake curvature map
-				'baker_curvature_rays', # 
-				'baker_curvature_jitter', # 
-				'baker_curvature_bias', # 
-				'baker_curvature_spread_angle', # 
-				'baker_curvature_algorithm', # 
-				'baker_curvature_distribution', # 
-				'baker_curvature_search_distance', # 
-				'baker_curvature_tone_mapping', # 
-				'baker_curvature_smoothing', # 
+				'baker_curvature_rays', # how many rays to use
+				'baker_curvature_jitter', # Bool use jitter or curavutre?
+				'baker_curvature_bias', # int
+				'baker_curvature_spread_angle', # int
+				'baker_curvature_algorithm', # string uniform cosine cosinesq
+				'baker_curvature_distribution', # # string uniform cosine cosinesq
+				'baker_curvature_search_distance', # # int
+				'baker_curvature_tone_mapping', # monocrom twotone threecolor string
+				'baker_curvature_smoothing', # should we use smoothing boolean
 				]
 
         for x in uv:
@@ -108,46 +110,65 @@ class Baker(object):
         return user_values
 
     def parseXML(self):
+    	"""Parse the xml and return the xml tree back to us"""
         bake_settings = open(self.settings_file)
         tree = ET.parse(bake_settings).getroot()
         return tree
 
     def writeXML(self):
-        '''This method writes settings from the settings dictionary'''
+        '''This method writes settings from the settings dictionary to an xml file and returns the file object'''
         # open the settings file
         f = open(self.settings_file + '_bake', 'w+')
         # write the file using utf-8 encoding
         f.write(ET.tostring(self.settings, encoding='UTF-8'))
         f.close()
+        # return the file object
         return f
 
     def set_user_values(self):
+        # low poly mesh file
         self.lo_poly_settings['File'] = self.user_values['low_poly_mesh']
+        
+        # cage mesh file
         self.lo_poly_settings['CageFile'] = self.user_values['cage_mesh']
+        
+        # where is the hi poly file at
         self.hi_poly_settings['File'] = self.user_values['hi_poly_mesh']
+        
+        # How much edge padding to use
         self.generate_maps_settings['EdgePadding'] = str(
             self.user_values['baker_edge_padding'])
+        
+        # Where to output the file
         self.generate_maps_settings[
             'File'] = self.user_values['baker_map_output']
+        
+        # Generate Normal map boolean
         self.generate_maps_settings['GenNormals'] = 'true' if self.user_values[
             'baker_norm_map'] == 1 else 'false'
+        
+        # Generate AO map boolean
         self.generate_maps_settings['GenAO'] = 'true' if self.user_values[
             'baker_ao_map'] == 1 else 'false'
+        
+        # Cavity Map Generation Boolean
         self.generate_maps_settings['GenCavity'] = 'true' if self.user_values[
             'baker_cavity_map'] == 1 else 'false'
+        
+        # Should the normal map be tangent space or world space?
         self.generate_maps_settings['TangentSpace'] = 'true' if self.user_values[
             'baker_tangent_space'] == 1 else 'false'
 		
-
+        # contains all the sizes of the map to bake 
 		baker_sizes = {'0':'256','1':'512','2':'1024','3':'2048','4':'4096','5':'8192',}
-
+		# set the height and width by looking up a dictionary value based on a key from a user value
         self.generate_maps_settings['Width'] = bake_sizes[self.user_values['baker_map_size_x']]
         self.generate_maps_settings['Height'] = bake_sizes[self.user_values['baker_map_size_y']]
         
         # if self.user_values['baker_map_size_x'] == '0':
         #     self.generate_maps_settings['Width'] = str(256)
         # elif self.user_values['baker_map_size_x'] == '1':
-        #     self.generate_maps_settings['Width'] = str(512)
+        #     self.generate_maps_settings['Width'] = str(512)s
         # elif self.user_values['baker_map_size_x'] == '2':
         #     self.generate_maps_settings['Width'] = str(1024)
         # elif self.user_values['baker_map_size_x'] == '3':
@@ -195,6 +216,7 @@ def main():
     x = Baker()
     config = x.startBake()
     lx.out(x.BASE_PATH)
+    lx.out(__version__)
 
 
 if __name__ == '__main__':
