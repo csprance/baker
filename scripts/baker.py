@@ -125,6 +125,7 @@ class Baker(object):
                                 'baker_curvature_smoothing',
         ]
 
+        # go through every user value and get them
         for x in uv:
             user_values[x] = lx.eval('user.value %s ?' % x)
         return user_values
@@ -188,34 +189,6 @@ class Baker(object):
             self.user_values['baker_map_size_x']]
         self.generate_maps_settings['Height'] = baker_sizes[
             self.user_values['baker_map_size_y']]
-
-        # if self.user_values['baker_map_size_x'] == '0':
-        #     self.generate_maps_settings['Width'] = str(256)
-        # elif self.user_values['baker_map_size_x'] == '1':
-        #     self.generate_maps_settings['Width'] = str(512)s
-        # elif self.user_values['baker_map_size_x'] == '2':
-        #     self.generate_maps_settings['Width'] = str(1024)
-        # elif self.user_values['baker_map_size_x'] == '3':
-        #     self.generate_maps_settings['Width'] = str(2048)
-        # elif self.user_values['baker_map_size_x'] == '4':
-        #     self.generate_maps_settings['Width'] = str(4096)
-        # elif self.user_values['baker_map_size_x'] == '5':
-        #     self.generate_maps_settings['Width'] = str(8192)
-
-        # if self.user_values['baker_map_size_y'] == '0':
-        #     self.generate_maps_settings['Height'] = str(256)
-        # elif self.user_values['baker_map_size_y'] == '1':
-        #     self.generate_maps_settings['Height'] = str(512)
-        # elif self.user_values['baker_map_size_y'] == '2':
-        #     self.generate_maps_settings['Height'] = str(1024)
-        # elif self.user_values['baker_map_size_y'] == '3':
-        #     self.generate_maps_settings['Height'] = str(2048)
-        # elif self.user_values['baker_map_size_y'] == '4':
-        #     self.generate_maps_settings['Height'] = str(4096)
-        # elif self.user_values['baker_map_size_y'] == '5':
-        #     self.generate_maps_settings['Height'] = str(8192)
-
-        #self.generate_maps_settings['Height'] = self.user_values['baker_map_size_y']
 
     def startBake(self):
         '''This kicks off the xNormal worker thread'''
